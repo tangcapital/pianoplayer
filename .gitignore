@@ -4,3 +4,7 @@
 output.xml
 *.DS_Store
 *.egg-info/*
+
+.venv
+.vscode
+lambdabuild
