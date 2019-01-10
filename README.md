@@ -48,17 +48,6 @@ pianoplayer [-h] [-o] [-n] [-s] [-d] [-k] [-rbeam] [-lbeam] [-q] [-m] [-v] [--vt
 #   -XXL, --hand-size-XXL Set hand size to XXL
 ```
 
-If using the GUI:<br />
-- press Import Score
-- press GENERATE (`output.xml` is written)
-- press Musescore to visualize the annotated score
-- press 3D Player to show the animation (closing it with `Esc` will quit the application)
-![gui](https://user-images.githubusercontent.com/32848391/44989235-8582ee00-af8d-11e8-8899-e35df11a4076.png)
-
-
-Example output displayed in *musescore*:<br />
-![bachinv4](https://user-images.githubusercontent.com/32848391/31663245-a9e23e0c-b341-11e7-9e07-d90d4959521b.png)
-
 
 ## How the algorithm works:
 The algorithm minimizes the fingers speed needed to play a sequence of notes or chords by searching 
