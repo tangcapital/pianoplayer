@@ -1,0 +1,44 @@
+service: piano-fingers-api
+
+provider:
+  name: aws
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "ec2:CreateNetworkInterface"
+        - "ec2:DescribeNetworkInterfaces"
+        - "ec2:DeleteNetworkInterface"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource:
+        - "arn:aws:s3:::piano-fingers-api"
+        - "arn:aws:s3:::piano-fingers-api/*"
+    - Effect: "Allow"
+      Action:
+        - lambda:InvokeFunction
+      Resource: "*"
+  runtime: python3.7
+  stage: dev
+  region: us-west-2
+
+functions:
+  process:
+    handler: main.process_handler
+  invoke:
+    handler: main.invoke_handler
+    events:
+      - http:
+          path: run
+          method: post
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true

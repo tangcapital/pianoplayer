@@ -8,3 +8,5 @@ output.xml
 .venv
 .vscode
 lambdabuild
+
+blank_space_test.xml

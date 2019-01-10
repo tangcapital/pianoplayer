@@ -189,7 +189,7 @@ class Hand:
             an = self.noteseq[i]
             if an.measure:
                 if an.measure < start_measure : continue
-                if an.measure > start_measure + nmeasures : break
+                if nmeasures and (an.measure > start_measure + nmeasures) : break
 
             if i > N-11:
                 self.autodepth = False

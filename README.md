@@ -10,7 +10,119 @@ $ pip3 install -e ./
 $ pianoplayer ./scores/timetravel.xml --debug -b -x -XL -o timetravel_XL_x.xml
 ```
 
+The ```pip3 install -e ./``` command installs the binary so you can run pianoplayer from the command line (within the project folder). To run pianoplayer from a python script you'll need to run ```pipenv install && pipenv install --dev``` as listed below in the API deployment section.
+
 ---
+
+## API Usage:
+
+POST to https://7pnb6mulwk.execute-api.us-west-2.amazonaws.com/dev/run
+Payload is the xml file data as a bytestring
+
+The rest of the arguments get passed as query string params (listed with the default values):
+```python
+{
+    "n-measures": 0, #0 = auto, runs the whole file
+    "start-measure": 1,
+    "depth": 0, #0 is auto,
+    "debug": 0, # true or false
+    "below-beam": 1, # true or false, fingering #'s below staff,
+    "hand-stretch": 1, # true or false
+    "hand-size": "XL",
+    "output-key": "output.xml",
+    "bucket": "piano-fingers-api"
+}
+```
+These are the hand sizes that are accepted by the API:
+```JSON
+[
+    "XXS",
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+]
+```
+
+The API will return a response:
+```JSON
+{
+    "output_key": output_key,
+    "bucket": bucket,
+    "input_key": input_key
+}
+```
+
+The uploaded xml file will get saved to s3://bucket/input/input_key, as the processer needs to modify this file part by part.
+
+Currently there is no API endpoint to check out the processing status, but you can just check for s3://bucket/output_key and if the file exists the process has completed (to be improved upon pending Admin requirements).
+
+
+Here's a brief example of posting a MusicXML document to the API in node.js:
+
+```node
+const request = require("request-promise");
+const fs = require("fs");
+
+const postToApi = (filedata) => {
+  request({
+    url: "https://7pnb6mulwk.execute-api.us-west-2.amazonaws.com/dev/run",
+    method: "POST",
+    qs: {
+      "output-key": "blank_space_from_node.xml",
+      //other algorithm arguments go here
+      //"hand-size": "XXL",
+      //"hand-stretch": 0
+    },
+    body: filedata
+  })
+  .then((res) => console.log(res))
+}
+
+fs.readFile('blank_space_test.xml', function(err, data) {
+  postToApi(data)
+})
+
+```
+
+
+### API Deployment
+
+Before running any API deployment commands, you must run:
+```bash
+$ pipenv install && pipenv install --dev
+```
+This install pylambdas, which is used to build and deploy the AWS Lambda package.
+
+To deploy the application to AWS, simply run:
+```bash
+pipenv run build
+```
+
+If you've made changes that include adding any python files, the files must be listed under the depend -> local section of the config in build.py:
+```python
+config = {
+    "name": "piano-fingers-api",
+    "yml": "piano-fingers-api.yml",
+    "template": "aws-python",
+    "pyversion": "3.7",
+    "depend": {
+        "local": [
+            "main.py",
+            "monkeypatch.py"
+        ],
+        "submodule": [ "pianoplayer" ],
+        "python": [
+            "music21"
+        ]
+    },
+    "configs": [],
+    "root": get_root(),
+    "build": "lambdabuild"
+}
+```
 
 ### Optional:
 To visualize the annotated score install for free [musescore](https://musescore.org/it/download):
