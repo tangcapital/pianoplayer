@@ -3,10 +3,9 @@ import io
 
 API_URL = "https://7pnb6mulwk.execute-api.us-west-2.amazonaws.com/dev/run"
 
-filename = "bach_invention4.xml"
-filepath = "scores/{}".format(filename)
+filename = "100 Years - Five for Fighting.xml"
 
-with open(filepath, "rb") as infile:
+with open(filename, "rb") as infile:
     data = infile.read()
     infile_buf = io.BytesIO(data)
     infile_buf.seek(0)
@@ -15,8 +14,7 @@ result = requests.post(API_URL,
     data=infile_buf,
     params={
         "output-key": filename,
-        "hand-stretch": 0,
-        "hand-size": "S"
+        "num-measures": 10
     }
 )
 

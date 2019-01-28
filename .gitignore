@@ -9,4 +9,4 @@ output.xml
 .vscode
 lambdabuild
 
-blank_space_test.xml
+*.xml

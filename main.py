@@ -63,6 +63,15 @@ def default_getter(src_dict, default_dict):
 def str_to_bool(data):
     return bool(int(data))
 
+hands_order = [
+    "right",
+    "right",
+    "right",
+    "left",
+    "right",
+    "left"
+]
+
 def main(sf, part_index, args=default_args):
     get_arg = default_getter(args, default_args)
 
@@ -80,7 +89,8 @@ def main(sf, part_index, args=default_args):
 
     part = sf.parts[part_index]
 
-    hand = Hand(part.id, hand_size)
+    hand_selection = hands_order[part_index]
+    hand = Hand(hand_selection, hand_size)
     hand.verbose = debug
     if depth == 0:
         hand.autodepth = True
@@ -111,7 +121,8 @@ def success(body):
 
 def invoke_handler(event, context):
     try:
-        args = event.get('queryStringParameters', {})
+        query_string = event.get('queryStringParameters')
+        args = query_string if query_string else {}
         print(args)
         input_key = "input/{}".format(context.aws_request_id)
         bucket = args.get("bucket", OUTPUT_BUCKET)
@@ -199,7 +210,7 @@ def process_handler(body, context):
             })
 
 if __name__ == "__main__":
-    input_file = "scores/bach_invention4.xml"
+    input_file = "100 Years - Five for Fighting.xml"
 
     with open(input_file, "r") as infile:
         buf = infile.read()
@@ -207,9 +218,7 @@ if __name__ == "__main__":
     sf = converter.parse(buf)
     for i in range(0, len(sf.parts)):
         buf = main(sf, i, args={
-            "hand-stretch": 0,
-            "hand-size": "S",
-            "n-measures":100
+            "n-measures":15
         })
 
     with open('output.xml', 'wb') as outfile:

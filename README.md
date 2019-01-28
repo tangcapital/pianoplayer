@@ -46,6 +46,35 @@ These are the hand sizes that are accepted by the API:
 ]
 ```
 
+### Right Hand vs Left Hand
+
+Our MusicXML documents are structured as follows:
+
+```
+Track 1 - lyrics (right hand default)
+Track 2 - whole verse keys (right hand default)
+Track 3 - melody
+    - staff 1 - right hand
+    - staff 2 - left hand
+Track 4 - accompaniment
+    - staff 1 - right hand
+    - staff 2 - left hand
+```
+This results in the following hand order:
+
+```
+hands_order = [
+    "right", #lyrics
+    "right", #whole verse keys
+    "right", #track 3 staff 1
+    "left", #track 3 staff 2
+    "right", #track 4 staff 1
+    "left" #track 4 staff 2
+]
+```
+
+### Responses
+
 The API will return a response:
 ```JSON
 {
@@ -88,7 +117,7 @@ fs.readFile('blank_space_test.xml', function(err, data) {
 ```
 
 
-### API Deployment
+## Deployment
 
 Before running any API deployment commands, you must run:
 ```bash
