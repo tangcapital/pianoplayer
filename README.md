@@ -16,7 +16,10 @@ The ```pip3 install -e ./``` command installs the binary so you can run pianopla
 
 ## API Usage:
 
-POST to https://7pnb6mulwk.execute-api.us-west-2.amazonaws.com/dev/run
+POST to:
+ * STAGING/DEV: https://7pnb6mulwk.execute-api.us-west-2.amazonaws.com/dev/run
+ * PROD: https://w5orqub3ii.execute-api.us-west-2.amazonaws.com/prod/run
+
 Payload is the xml file data as a bytestring
 
 The rest of the arguments get passed as query string params (listed with the default values):
@@ -29,8 +32,7 @@ The rest of the arguments get passed as query string params (listed with the def
     "below-beam": 1, # true or false, fingering #'s below staff,
     "hand-stretch": 1, # true or false
     "hand-size": "XL",
-    "output-key": "output.xml",
-    "bucket": "piano-fingers-api"
+    "output-key": "output.xml"
 }
 ```
 These are the hand sizes that are accepted by the API:

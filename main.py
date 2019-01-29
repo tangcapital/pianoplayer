@@ -7,10 +7,18 @@ from pianoplayer.scorereader import reader
 
 import boto3
 
-OUTPUT_BUCKET = "piano-fingers-api"
-PROCESS_LAMBDA_NAME = "piano-fingers-api-dev-process"
+try:
+    BUCKET = os.environ["BUCKET"]
+    PROCESS_LAMBDA_NAME = os.environ["PROCESS_LAMBDA"]
+except Exception as e:
+    print("error resolving enviornment variables - {}".format(str(e)))
+    raise
+else:
+    print("Environment: \n BUCKET: {} \n PROCESS_LAMBDA: {}".format(
+        BUCKET, PROCESS_LAMBDA_NAME
+    ))
 
-def put_s3(data, path, bucket=OUTPUT_BUCKET):
+def put_s3(data, path, bucket=BUCKET):
     client = boto3.client('s3', 'us-west-2')
     client.put_object(
         Body=data,
@@ -18,7 +26,7 @@ def put_s3(data, path, bucket=OUTPUT_BUCKET):
         Key=path
     )
 
-def get_s3(key, bucket=OUTPUT_BUCKET):
+def get_s3(key, bucket=BUCKET):
     client = boto3.client("s3", "us-west-2")
     return client.get_object(
         Bucket=bucket,
@@ -125,7 +133,6 @@ def invoke_handler(event, context):
         args = query_string if query_string else {}
         print(args)
         input_key = "input/{}".format(context.aws_request_id)
-        bucket = args.get("bucket", OUTPUT_BUCKET)
         output_key = args.get("output-key", "output.xml")
     except Exception as e:
         msg = "error {}".format(str(e))
@@ -145,7 +152,6 @@ def invoke_handler(event, context):
         run_process_lambda({
             "args": args,
             "key": input_key,
-            "bucket": bucket,
             "output-key": output_key,
             "part-index": 0
         })
@@ -156,7 +162,7 @@ def invoke_handler(event, context):
 
     return success({
         "output_key": output_key,
-        "bucket": bucket,
+        "bucket": BUCKET,
         "input_key": input_key
     })
 
@@ -164,7 +170,6 @@ def process_handler(body, context):
     try:
         print(body)
         input_key = body["key"]
-        bucket = body["bucket"]
         output_key = body["output-key"]
         part_index = body["part-index"]
 
@@ -174,7 +179,7 @@ def process_handler(body, context):
         raise
 
     try:
-        input_file = get_s3(input_key, bucket)
+        input_file = get_s3(input_key)
         input_bytes = input_file["Body"].read()
         sf = converter.parse(input_bytes)
         num_of_parts = len(sf.parts)
@@ -204,7 +209,6 @@ def process_handler(body, context):
             run_process_lambda({
                 "args": args,
                 "key": input_key,
-                "bucket": bucket,
                 "output-key": output_key,
                 "part-index": part_index + 1
             })

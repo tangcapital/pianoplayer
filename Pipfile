@@ -16,5 +16,6 @@ python_version = "3.7"
 
 [scripts]
 build = "python build.py"
+build-prod = "python build.py --prod"
 file = "python"
 test = "python test_lambda_endpoint.py"

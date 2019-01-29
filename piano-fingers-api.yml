@@ -16,15 +16,18 @@ provider:
       Action:
         - "s3:*"
       Resource:
-        - "arn:aws:s3:::piano-fingers-api"
-        - "arn:aws:s3:::piano-fingers-api/*"
+        - "arn:aws:s3:::${self:custom.apiBucket}"
+        - "arn:aws:s3:::${self:custom.apiBucket}/*"
     - Effect: "Allow"
       Action:
         - lambda:InvokeFunction
       Resource: "*"
   runtime: python3.7
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-west-2
+  environment:
+    BUCKET: ${self:custom.apiBucket}
+    PROCESS_LAMBDA: ${self:service}-${opt:stage}-process
 
 functions:
   process:
@@ -42,3 +45,7 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: true
+  bucket:
+    prod: "piano-fingers-api"
+    dev: "piano-fingers-api-test"
+  apiBucket: ${self:custom.bucket.${opt:stage}}
