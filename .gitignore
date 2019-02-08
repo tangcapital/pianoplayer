@@ -5,8 +5,10 @@ output.xml
 *.DS_Store
 *.egg-info/*
 
+.env
 .venv
 .vscode
 lambdabuild
 
 *.xml
+!BlinktheBee-Jingle.xml

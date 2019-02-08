@@ -10,7 +10,7 @@ if "--prod" in sys.argv:
 else:
     API_URL = DEV_URL
 
-filename = "100 Years - Five for Fighting.xml"
+filename = "BlinktheBee-Jingle.xml"
 
 with open(filename, "rb") as infile:
     data = infile.read()
@@ -21,7 +21,7 @@ print("posting to {}".format(API_URL))
 result = requests.post(API_URL,
     data=infile_buf,
     params={
-        "output-key": filename,
+        "output-key": "defaultx-test-freeman.xml",
         "num-measures": 10,
     }
 )

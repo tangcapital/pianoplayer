@@ -111,8 +111,6 @@ def main(sf, part_index, args=default_args):
     hand.noteseq = reader(sf, beam=part_index)
     hand.generate(start_measure, n_measures)
 
-    return write_file_obj(sf)
-
 
 def response(code, body, headers={ "Content-Type": "application/json" }):
     return {
@@ -142,7 +140,9 @@ def invoke_handler(event, context):
     try:
         print("putting input file in s3")
         input_bytes = event.get('body', b"")
-        put_s3(input_bytes, input_key)
+        sf = converter.parse(input_bytes)
+        frozen = converter.freezeStr(sf, fmt="pickle")
+        put_s3(frozen, input_key)
     except Exception as e:
         msg = "error putting input file in s3 {}".format(str(e))
         print(msg)
@@ -181,7 +181,7 @@ def process_handler(body, context):
     try:
         input_file = get_s3(input_key)
         input_bytes = input_file["Body"].read()
-        sf = converter.parse(input_bytes)
+        sf = converter.thawStr(input_bytes)
         num_of_parts = len(sf.parts)
         max_index = num_of_parts - 1
     except Exception as e:
@@ -193,18 +193,19 @@ def process_handler(body, context):
         print("running part # {} (index {}) of {} (max index {})".format(
             part_index + 1, part_index, num_of_parts, max_index)
         )
-        output_buf = main(sf, part_index, args=args)
+        main(sf, part_index, args=args)
     except Exception as e:
         msg = "error converting file {}".format(str(e))
         print(msg)
         raise
     else:
-        output_data = output_buf.read()
         if part_index == max_index:
             print("finished processing last part, writing output")
+            output_data = write_file_obj(sf)
             put_s3(output_data, output_key)
         else:
             print("still more parts to process, running next lambda")
+            output_data = converter.freezeStr(sf, fmt="pickle")
             put_s3(output_data, input_key)
             run_process_lambda({
                 "args": args,
@@ -214,18 +215,16 @@ def process_handler(body, context):
             })
 
 if __name__ == "__main__":
-    input_file = "100 Years - Five for Fighting.xml"
+    input_file = "BlinktheBee-Jingle.xml"
 
     with open(input_file, "r") as infile:
         buf = infile.read()
 
     sf = converter.parse(buf)
-    for i in range(0, len(sf.parts)):
-        buf = main(sf, i, args={
-            "n-measures":15
-        })
 
-    with open('output.xml', 'wb') as outfile:
+    main(sf, 2, args={ "n-measures": 15 })
+
+    buf = write_file_obj(sf)
+
+    with open("local_output.xml", 'wb') as outfile:
         outfile.write(buf.read())
-
-    # put_s3(buf, "test_bach_invention4.xml")

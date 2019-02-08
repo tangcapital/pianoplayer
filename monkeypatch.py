@@ -19,4 +19,4 @@ def write_file_obj(score):
     write method at line 2480
     '''
     formatWriter = FileObjConverterMusicXML()
-    return formatWriter.write(score, None)
+    return formatWriter.write(score, "musicxml")
