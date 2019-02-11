@@ -214,18 +214,9 @@ class Hand:
                 if an.isChord:
                     if an.chord21.style:
                         an.chord21.style.absoluteX = an.chord21._notes[0]._style.absoluteX
-                    if self.lyrics:
-                         if len(an.chord21.pitches) <= 3:
-                             # dont show fingering in the lyrics line for >3 note-chords
-                             nl = len(an.chord21.pitches) - an.chordnr
-                             an.chord21.addLyric(best_finger, nl)
-                    else:
-                        an.chord21.articulations.append(fng)
+                    an.chord21.articulations.append(fng)
                 else:
-                    if self.lyrics:
-                        an.note21.addLyric(best_finger)
-                    else:
-                        an.note21.articulations.append(fng)
+                    an.note21.articulations.append(fng)
 
 
             #-----------------------------
