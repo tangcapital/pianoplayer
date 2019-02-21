@@ -92,7 +92,6 @@ def reader(sf, beam=0):
 
     if len(noteseq)<2: 
         print("Beam is empty. Exit.")
-        quit()    
     
     return noteseq
 

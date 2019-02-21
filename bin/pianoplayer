@@ -55,8 +55,20 @@ if '.msc' in args.filename:
 
 sf = converter.parse(xmlfn)
 
+
+hands_order = [
+    "right",
+    "right",
+    "right",
+    "left",
+    "right",
+    "left"
+]
+
+
 for index, item in enumerate(sf.parts):
-    hand = Hand(item.id, hand_size)
+    hand_name = hands_order[index]
+    hand = Hand(hand_name, hand_size)
     hand.verbose = args.debug
     if args.depth == 0:
         hand.autodepth = True

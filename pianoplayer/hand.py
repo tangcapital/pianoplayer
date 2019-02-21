@@ -178,7 +178,7 @@ class Hand:
                 anote.x = -anote.x             # play left as a right on a mirrored keyboard
 
         start_finger, out, vel = 0, [0]*9, 0
-        ninenotes = None
+        forward_notes = None
         N = len(self.noteseq)
         if self.depth < 2: self.depth = 2
         if self.depth > 9: self.depth = 9
@@ -195,18 +195,26 @@ class Hand:
                 self.depth = 9
 
             best_finger = 0
-            if i > N-10:
-                if len(out)>1: best_finger = out.pop(1)
-            else:
-                ninenotes = self.noteseq[i : i+9]
-                out, vel  = self.optimize_seq(ninenotes, start_finger)
-                best_finger  = out[0]
+            if (2 < N <= 9 and i == 0) or i <= N-9:
+                # we have enough notes to optimize sequence
+                if 2 < N <= 9 and i == 0:
+                    # handle streams with only a few notes
+                    forward_notes = self.noteseq
+                    self.depth = N
+                else:
+                    forward_notes = self.noteseq[i: i + 9]
+                out, vel = self.optimize_seq(forward_notes, start_finger)
+                best_finger = out[0]
                 start_finger = out[1]
+            elif i > N-9:
+                # nearing the end, no need to grab more forward_notes
+                if len(out) > 1:
+                    best_finger = out.pop(1)
 
             an.fingering = best_finger
 
-            if ninenotes:
-                self.set_fingers_positions(out, ninenotes, 0)
+            if forward_notes:
+                self.set_fingers_positions(out, forward_notes, 0)
             self.fingerseq.append(list(self.cfps))
 
             if best_finger>0:
