@@ -130,7 +130,6 @@ class Hand:
                 if axba>12 and (fa==1 and fb==2 or fa==2 and fb==1): return True
                 if axba>14 and (fa==1 and fb==3 or fa==3 and fb==1): return True
                 if axba>16 and (fa==1 and fb==4 or fa==4 and fb==1): return True
-                if  xba> 0 and fa>1  and fb==1: return True # no thumb cross inside chord, skip
                 if  xba< 0 and fa==1 and fb>1 : return True
             return False   ##########################################################
 
