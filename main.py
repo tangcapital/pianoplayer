@@ -71,10 +71,12 @@ def default_getter(src_dict, default_dict):
 def str_to_bool(data):
     return bool(int(data))
 
+#each array index refers to the corresponding part index of the music xml document
+start_index = 2
 hands_order = [
-    "right",
-    "right",
-    "right",
+    "right", #skipped by default
+    "right", #skipped by default
+    "right", #start here by default
     "left",
     "right",
     "left"
@@ -153,7 +155,7 @@ def invoke_handler(event, context):
             "args": args,
             "key": input_key,
             "output-key": output_key,
-            "part-index": 0
+            "part-index": start_index
         })
     except Exception as e:
         msg = "error invoking lambda {}".format(str(e))
