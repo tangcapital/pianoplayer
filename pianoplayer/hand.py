@@ -103,8 +103,24 @@ class Hand:
         depth = self.depth
 
         fingers = (1,2,3,4,5)
-        n1, n2, n3, n4, n5 = nseq[0:5]
-        n6, n7, n8, n9 = [None]*4
+        n_length = len(nseq)
+        if n_length < 5:
+            if n_length == 1:
+                n1 = nseq[0]
+                n2, n3, n4, n5, n6, n7, n8, n9 = [None]*8
+            if n_length == 2:
+                n1, n2 = nseq[0:2]
+                n3, n4, n5, n6, n7, n8, n9 = [None]*7
+            if n_length == 3:
+                n1, n2, n3 = nseq[0:3]
+                n4, n5, n6, n7, n8, n9 = [None]*6
+            if n_length == 4:
+                n1, n2, n3, n4 = nseq[0:4]
+                n5, n6, n7, n8, n9 = [None]*5
+        else:
+            n1, n2, n3, n4, n5 = nseq[0:5]
+            n6, n7, n8, n9 = [None]*4
+
         if depth>5: n6 = nseq[5]
         if depth>6: n7 = nseq[6]
         if depth>7: n8 = nseq[7]
@@ -113,6 +129,8 @@ class Hand:
         else: u1 = [istart]
 
         def skip(fa,fb, na,nb): ### two-consecutive-notes movement skipping rules ###
+            if na is None or nb is None:
+                return False
             # fa is fingering for note na
             xba = nb.x - na.x  # physical distance, cm
 
