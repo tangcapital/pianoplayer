@@ -102,7 +102,11 @@ def main(sf, part_index, args=default_args):
     hand_selection = hands_order[part_index]
     hand = Hand(hand_selection, hand_size)
     hand.verbose = debug
-    if depth == 0:
+    if len(part.flat) > 400 and depth == 0:
+        print("Too many notes, defaulting to depth of 5")
+        hand.autodepth = False
+        hand.depth = 5
+    elif depth == 0:
         hand.autodepth = True
     else:
         hand.autodepth = False

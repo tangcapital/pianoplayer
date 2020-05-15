@@ -70,7 +70,12 @@ for index, item in enumerate(sf.parts):
     hand_name = hands_order[index]
     hand = Hand(hand_name, hand_size)
     hand.verbose = args.debug
-    if args.depth == 0:
+
+    if len(item.flat) > 400 and args.depth == 0:
+        print("Too many notes, defaulting to depth of 5")
+        hand.autodepth = False
+        hand.depth = 5
+    elif args.depth == 0:
         hand.autodepth = True
     else:
         hand.autodepth = False

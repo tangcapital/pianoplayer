@@ -4,7 +4,7 @@
 output.xml
 *.DS_Store
 *.egg-info/*
-
+.idea
 .env
 .venv
 .vscode

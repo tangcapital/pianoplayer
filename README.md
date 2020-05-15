@@ -126,6 +126,7 @@ Before running any API deployment commands, you must run:
 $ pipenv install && pipenv install --dev
 ```
 This install pylambdas, which is used to build and deploy the AWS Lambda package.
+#####Make sure you have Docker running!
 
 To deploy the application to AWS, simply run:
 ```bash
